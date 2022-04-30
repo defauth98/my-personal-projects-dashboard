@@ -21,6 +21,7 @@ module.exports = {
   ],
   rules: {
     'space-before-function-paren': 'off',
-    'react/react-in-jsx-scope': 'off'
+    'react/react-in-jsx-scope': 'off',
+    'comma-dangle': 'off'
   }
 }
