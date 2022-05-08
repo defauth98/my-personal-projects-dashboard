@@ -1,20 +1,16 @@
-import { Button, Container, Flex, Heading } from '@chakra-ui/react'
-import ProjectList from './features/projectTable/ProjectTable'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import CreateProject from './pages/CreateProject'
+import LoginPage from './pages/LoginPage'
+import ProjectList from './pages/ProjectList'
 
-function App() {
+export default function App() {
   return (
-    <Container maxW="container.xl">
-      <Flex justifyContent="space-between">
-        <Heading as="h1" size="md" margin="1rem 1.5rem">
-          Projetos no portfólio
-        </Heading>
-
-        <Button margin="0.5rem 1.5rem">Adicionar</Button>
-      </Flex>
-
-      <ProjectList />
-    </Container>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<LoginPage />} />
+        <Route path="/projects" element={<ProjectList />} />
+        <Route path="/createProject" element={<CreateProject />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
-
-export default App

@@ -1,9 +1,24 @@
 import { Table, Thead, Tbody, Tr, Th, TableContainer } from '@chakra-ui/react'
+import { useEffect, useState } from 'react'
+import { api } from '../../api/api'
 import ProjectItem from './components/ProjectItem'
+import { ProjectType } from './dto/Project.dto'
 
-import projectList from './projectsData'
+export default function ProjectsTable() {
+  const [projects, setProjects] = useState<ProjectType[]>([])
 
-export default function ProjectList() {
+  async function getProjects() {
+    api.defaults.headers.common.Authorization = import.meta.env.VITE_API_TOKEN
+
+    const request = await api.get('/projects')
+
+    setProjects(request.data)
+  }
+
+  useEffect(() => {
+    getProjects()
+  }, [])
+
   return (
     <TableContainer>
       <Table variant="simple">
@@ -19,7 +34,7 @@ export default function ProjectList() {
           </Tr>
         </Thead>
         <Tbody>
-          {projectList.map((project) => (
+          {projects.map((project) => (
             <ProjectItem key={project.id} project={project} />
           ))}
         </Tbody>

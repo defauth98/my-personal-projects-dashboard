@@ -1,28 +1,18 @@
 import { Center, Flex, Td, Tr, Text } from '@chakra-ui/react'
 import { Eye, Trash, Pencil } from 'phosphor-react'
+import { ProjectType } from '../dto/Project.dto'
 import ProjectLink from './ProjectLink'
 import ProjectRepositoryLink from './ProjectReposityLink'
 
-interface ProjectItemProps {
-  project: {
-    id: number
-    favicon?: string
-    title: string
-    description: string
-    link: string
-    repoLink: string
-  }
-}
-
-export default function ProjectItem({ project }: ProjectItemProps) {
+export default function ProjectItem({ project }: { project: ProjectType }) {
   return (
     <Tr>
       <Td>
         <Flex>
           {project && project.favicon && (
-            <img src={project.favicon} alt={project.title} width="20px" />
+            <img src={project.favicon} alt={project.name} width="20px" />
           )}
-          <Text paddingLeft="0.5rem">{project.title}</Text>
+          <Text paddingLeft="0.5rem">{project.name}</Text>
         </Flex>
       </Td>
       <Td>{project.description.slice(0, 30) + '...'}</Td>
