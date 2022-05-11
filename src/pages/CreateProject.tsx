@@ -1,6 +1,8 @@
-import { Button, Container, Flex, Heading, Input, Text } from '@chakra-ui/react'
+import { Button, Container, Flex, Input, Text } from '@chakra-ui/react'
 import { useForm } from 'react-hook-form'
+import { ArrowLeft } from 'phosphor-react'
 import { api } from '../api/api'
+import { useNavigate } from 'react-router'
 
 export default function CreateProject() {
   const {
@@ -8,6 +10,8 @@ export default function CreateProject() {
     register,
     formState: { isSubmitting },
   } = useForm()
+
+  const navigation = useNavigate()
 
   async function onSubmit(values: any) {
     const projectData = new FormData()
@@ -29,11 +33,15 @@ export default function CreateProject() {
     await api.post('/projects', projectData)
   }
 
+  function handleGoBack() {
+    navigation('/projects')
+  }
+
   return (
     <Container maxW="container.xl">
-      <Heading as="h1" size="md" margin="1rem 1.5rem">
-        Projetos no portfólio
-      </Heading>
+      <Button margin="2rem 0" onClick={handleGoBack}>
+        <ArrowLeft size={32} />
+      </Button>
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <Flex flexDirection="column">
