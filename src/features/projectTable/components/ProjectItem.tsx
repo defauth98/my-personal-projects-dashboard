@@ -1,10 +1,35 @@
 import { Center, Flex, Td, Tr, Text } from '@chakra-ui/react'
-import { Eye, Trash, Pencil } from 'phosphor-react'
+import { Eye, EyeClosed, Trash, Pencil } from 'phosphor-react'
+import { useState } from 'react'
+import { useNavigate } from 'react-router'
+import { api } from '../../../api/api'
 import { ProjectType } from '../dto/Project.dto'
 import ProjectLink from './ProjectLink'
 import ProjectRepositoryLink from './ProjectReposityLink'
 
-export default function ProjectItem({ project }: { project: ProjectType }) {
+type ProjectItemProps = {
+  project: ProjectType
+  getProjects: () => void
+}
+
+export default function ProjectItem({
+  project,
+  getProjects,
+}: ProjectItemProps) {
+  const [isHidden, setIsHidden] = useState(project.hidden)
+
+  const navigation = useNavigate()
+
+  async function handleDeleteProject() {
+    await api.delete(`/projects/${project.id}`)
+    getProjects()
+  }
+
+  async function handleHiddeProject() {
+    await api.put(`/projects/${project.id}`, { hidden: !isHidden })
+    setIsHidden(!isHidden)
+  }
+
   return (
     <Tr>
       <Td>
@@ -24,22 +49,25 @@ export default function ProjectItem({ project }: { project: ProjectType }) {
       </Td>
       <Td>
         <Flex>
-          <Center>
+          <Center
+            onClick={() => navigation(`/editProject/${project.id}`)}
+            cursor="pointer"
+          >
             <Pencil size={32} />
           </Center>
         </Flex>
       </Td>
       <Td>
         <Flex>
-          <Center>
+          <Center onClick={handleDeleteProject} cursor="pointer">
             <Trash size={32} />
           </Center>
         </Flex>
       </Td>
       <Td>
         <Flex>
-          <Center>
-            <Eye size={32} />
+          <Center onClick={handleHiddeProject} cursor="pointer">
+            {isHidden ? <EyeClosed size={32} /> : <Eye size={32} />}
           </Center>
         </Flex>
       </Td>

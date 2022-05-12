@@ -35,7 +35,11 @@ export default function ProjectsTable() {
         </Thead>
         <Tbody>
           {projects.map((project) => (
-            <ProjectItem key={project.id} project={project} />
+            <ProjectItem
+              key={project.id}
+              project={project}
+              getProjects={getProjects}
+            />
           ))}
         </Tbody>
       </Table>

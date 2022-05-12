@@ -1,41 +1,39 @@
 import { Button, Container, Flex, Input, Text } from '@chakra-ui/react'
-import { useForm } from 'react-hook-form'
 import { ArrowLeft } from 'phosphor-react'
+import { useForm } from 'react-hook-form'
+import { useNavigate, useParams } from 'react-router'
 import { api } from '../api/api'
-import { useNavigate } from 'react-router'
+import createFormData from '../utils/createFormData'
 
-export default function CreateProject() {
+export default function EditProject() {
   const {
     handleSubmit,
     register,
     formState: { isSubmitting },
   } = useForm()
 
+  const { projectId } = useParams()
+
   const navigation = useNavigate()
 
-  async function onSubmit(values: any) {
-    const projectData = new FormData()
+  api.defaults.headers.common.Authorization = import.meta.env.VITE_API_TOKEN
 
-    const keys = Object.keys(values)
+  async function onSubmitProjectFields(values: any) {
+    const projectData = createFormData(values)
 
-    for (const key of keys) {
-      const value = values[key]
+    await api.put(`/projects/${projectId}`, projectData)
+  }
 
-      if (typeof value === 'object') {
-        projectData.append(key, value[0])
-      } else {
-        projectData.append(key, value)
-      }
-    }
+  async function onSubmitThumbnail(values: any) {
+    const projectData = createFormData(values)
 
-    api.defaults.headers.common.Authorization = import.meta.env.VITE_API_TOKEN
+    await api.put(`/projects/${projectId}`, projectData)
+  }
 
-    try {
-      await api.post('/projects', projectData)
-      navigation('/projects')
-    } catch (error) {
-      alert(error)
-    }
+  async function onSubmitGif(values: any) {
+    const projectData = createFormData(values)
+
+    await api.put(`/projects/${projectId}`, projectData)
   }
 
   function handleGoBack() {
@@ -48,7 +46,7 @@ export default function CreateProject() {
         <ArrowLeft size={32} />
       </Button>
 
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmitProjectFields)}>
         <Flex flexDirection="column">
           <Text mb="4px">Nome do projeto</Text>
           <Input {...register('name')} />
@@ -69,15 +67,23 @@ export default function CreateProject() {
           <Input type="url" {...register('link')} />
         </Flex>
 
-        {/* <Flex flexDirection="column" mt="16px">
-          <Text mb="4px">Thumnail</Text>
+        <Flex flexDirection="column" mt="16px">
+          <Button
+            mt={4}
+            colorScheme="teal"
+            isLoading={isSubmitting}
+            type="submit"
+          >
+            Salvar projeto
+          </Button>
+        </Flex>
+      </form>
+
+      <form onSubmit={handleSubmit(onSubmitThumbnail)}>
+        <Flex flexDirection="column" mt="16px">
+          <Text mb="4px">Thumbnail</Text>
           <Input type="file" {...register('thumbnail')} />
         </Flex>
-
-        <Flex flexDirection="column" mt="16px">
-          <Text mb="4px">Gif</Text>
-          <Input type="file" marginTop="4px" {...register('gif')} />
-        </Flex> */}
 
         <Flex flexDirection="column" mt="16px">
           <Button
@@ -86,7 +92,25 @@ export default function CreateProject() {
             isLoading={isSubmitting}
             type="submit"
           >
-            Criar projeto
+            Salvar thumbnail
+          </Button>
+        </Flex>
+      </form>
+
+      <form onSubmit={handleSubmit(onSubmitGif)}>
+        <Flex flexDirection="column" mt="16px">
+          <Text mb="4px">Gif</Text>
+          <Input type="file" marginTop="4px" {...register('gif')} />
+        </Flex>
+
+        <Flex flexDirection="column" mt="16px">
+          <Button
+            mt={4}
+            colorScheme="teal"
+            isLoading={isSubmitting}
+            type="submit"
+          >
+            Salvar gif
           </Button>
         </Flex>
       </form>

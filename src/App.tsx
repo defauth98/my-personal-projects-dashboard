@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import CreateProject from './pages/CreateProject'
+import EditProject from './pages/EditProject'
 import LoginPage from './pages/LoginPage'
 import ProjectList from './pages/ProjectList'
 
@@ -10,6 +11,7 @@ export default function App() {
         <Route path="/" element={<LoginPage />} />
         <Route path="/projects" element={<ProjectList />} />
         <Route path="/createProject" element={<CreateProject />} />
+        <Route path="/editProject/:projectId" element={<EditProject />} />
       </Routes>
     </BrowserRouter>
   )
