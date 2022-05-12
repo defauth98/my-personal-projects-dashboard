@@ -3,6 +3,8 @@ import { useForm } from 'react-hook-form'
 import { ArrowLeft } from 'phosphor-react'
 import { api } from '../api/api'
 import { useNavigate } from 'react-router'
+import { useEffect, useState } from 'react'
+import { githubAPI } from '../api/githubApi'
 
 export default function CreateProject() {
   const {
@@ -12,6 +14,26 @@ export default function CreateProject() {
   } = useForm()
 
   const navigation = useNavigate()
+  const [projectName, setProjectName] = useState('')
+  const [projectDescription, setProjectDescription] = useState('')
+  const [projectRepoLink, setProjectRepoLink] = useState('')
+  const [projectLink, setProjectLink] = useState('')
+
+  async function getProjectFromGithub() {
+    const githubResponse = await githubAPI.get(
+      `/repos/defauth98/${projectName}`
+    )
+
+    setProjectDescription(githubResponse.data.description)
+    setProjectRepoLink(githubResponse.data.html_url)
+    setProjectLink(githubResponse.data.homepage)
+  }
+
+  useEffect(() => {
+    if (projectName.length >= 5) {
+      getProjectFromGithub()
+    }
+  }, [projectName])
 
   async function onSubmit(values: any) {
     const projectData = new FormData()
@@ -51,22 +73,40 @@ export default function CreateProject() {
       <form onSubmit={handleSubmit(onSubmit)}>
         <Flex flexDirection="column">
           <Text mb="4px">Nome do projeto</Text>
-          <Input {...register('name')} />
+          <Input
+            {...register('name')}
+            value={projectName}
+            onChange={(event) => setProjectName(event.target.value)}
+          />
         </Flex>
 
         <Flex flexDirection="column" mt="16px">
           <Text mb="4px">Descrição</Text>
-          <Input {...register('description')} />
+          <Input
+            {...register('description')}
+            value={projectDescription}
+            onChange={(event) => setProjectDescription(event.target.value)}
+          />
         </Flex>
 
         <Flex flexDirection="column" mt="16px">
           <Text mb="4px">Link do repositório</Text>
-          <Input type="url" {...register('repoLink')} />
+          <Input
+            type="url"
+            {...register('repoLink')}
+            value={projectRepoLink}
+            onChange={(event) => setProjectRepoLink(event.target.value)}
+          />
         </Flex>
 
         <Flex flexDirection="column" mt="16px">
           <Text mb="4px">Link do projeto</Text>
-          <Input type="url" {...register('link')} />
+          <Input
+            type="url"
+            {...register('link')}
+            value={projectLink}
+            onChange={(event) => setProjectLink(event.target.value)}
+          />
         </Flex>
 
         {/* <Flex flexDirection="column" mt="16px">
