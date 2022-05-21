@@ -1,6 +1,8 @@
 import { Button, Container, Flex, Heading } from '@chakra-ui/react'
 import ProjectsTable from '../features/projectTable/ProjectTable'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../contexts/authContext'
+import { useEffect } from 'react'
 
 export default function ProjectList() {
   const navigation = useNavigate()
@@ -8,6 +10,14 @@ export default function ProjectList() {
   function handleGoToCreateProjectPage() {
     navigation('/createProject')
   }
+
+  const { user, retrieveDataFromLocalStorage } = useAuth()
+
+  useEffect(() => {
+    if (user === null) {
+      retrieveDataFromLocalStorage()
+    }
+  }, [user])
 
   return (
     <Container maxW="container.xl">
@@ -20,7 +30,6 @@ export default function ProjectList() {
           Adicionar
         </Button>
       </Flex>
-
       <ProjectsTable />
     </Container>
   )

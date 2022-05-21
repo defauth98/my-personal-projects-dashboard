@@ -1,8 +1,10 @@
 import { Button, Container, Flex, Input, Text } from '@chakra-ui/react'
 import { ArrowLeft } from 'phosphor-react'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router'
 import { api } from '../api/api'
+import { useAuth } from '../contexts/authContext'
 import createFormData from '../utils/createFormData'
 
 export default function EditProject() {
@@ -16,7 +18,7 @@ export default function EditProject() {
 
   const navigation = useNavigate()
 
-  api.defaults.headers.common.Authorization = import.meta.env.VITE_API_TOKEN
+  const { user, retrieveDataFromLocalStorage } = useAuth()
 
   async function onSubmitProjectFields(values: any) {
     const projectData = createFormData(values)
@@ -39,6 +41,12 @@ export default function EditProject() {
   function handleGoBack() {
     navigation('/projects')
   }
+
+  useEffect(() => {
+    if (user === null) {
+      retrieveDataFromLocalStorage()
+    }
+  }, [user])
 
   return (
     <Container maxW="container.xl">

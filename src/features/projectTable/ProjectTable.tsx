@@ -8,8 +8,6 @@ export default function ProjectsTable() {
   const [projects, setProjects] = useState<ProjectType[]>([])
 
   async function getProjects() {
-    api.defaults.headers.common.Authorization = import.meta.env.VITE_API_TOKEN
-
     const request = await api.get('/projects')
 
     setProjects(request.data)
