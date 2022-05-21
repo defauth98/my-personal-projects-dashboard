@@ -7,5 +7,5 @@ export type ProjectType = {
   hidden: boolean
   link: string
   repoLink: string
-  favicon?: string
+  faviconLink?: string
 }

@@ -39,8 +39,8 @@ export default function ProjectItem({
     <Tr>
       <Td>
         <Flex>
-          {project && project.favicon && (
-            <img src={project.favicon} alt={project.name} width="20px" />
+          {project && project.faviconLink && (
+            <img src={project.faviconLink} alt={project.name} width="20px" />
           )}
           <Text paddingLeft="0.5rem">{project.name}</Text>
         </Flex>
