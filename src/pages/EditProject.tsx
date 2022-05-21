@@ -5,6 +5,8 @@ import { useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router'
 import { api } from '../api/api'
 import { useAuth } from '../contexts/authContext'
+
+import { ProjectType } from '../features/projectTable/dto/Project.dto'
 import createFormData from '../utils/createFormData'
 
 export default function EditProject() {
@@ -12,6 +14,7 @@ export default function EditProject() {
     handleSubmit,
     register,
     formState: { isSubmitting },
+    setValue,
   } = useForm()
 
   const { projectId } = useParams()
@@ -42,11 +45,27 @@ export default function EditProject() {
     navigation('/projects')
   }
 
+  async function getProjectData() {
+    const response = await api.get<ProjectType>(`/projects/${projectId}`)
+
+    const keys = Object.keys(response.data) as Array<keyof typeof response.data>
+
+    for (const key of keys) {
+      if (key !== 'hidden' && key !== 'createdAt' && key !== 'updatedAt') {
+        setValue(key, response.data[key])
+      }
+    }
+  }
+
   useEffect(() => {
     if (user === null) {
       retrieveDataFromLocalStorage()
     }
   }, [user])
+
+  useEffect(() => {
+    getProjectData()
+  }, [projectId])
 
   return (
     <Container maxW="container.xl">
@@ -73,6 +92,11 @@ export default function EditProject() {
         <Flex flexDirection="column" mt="16px">
           <Text mb="4px">Link do projeto</Text>
           <Input type="url" {...register('link')} />
+        </Flex>
+
+        <Flex flexDirection="column" mt="16px">
+          <Text mb="4px">Link do favicon</Text>
+          <Input type="url" {...register('faviconLink')} />
         </Flex>
 
         <Flex flexDirection="column" mt="16px">

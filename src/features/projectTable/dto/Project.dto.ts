@@ -8,4 +8,6 @@ export type ProjectType = {
   link: string
   repoLink: string
   faviconLink?: string
+  createdAt?: string
+  updatedAt?: string
 }
