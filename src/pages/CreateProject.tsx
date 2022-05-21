@@ -6,6 +6,10 @@ import { useNavigate } from 'react-router'
 import { useEffect, useState } from 'react'
 import { githubAPI } from '../api/githubApi'
 
+type CreateProjectResponse = {
+  message: string
+}
+
 export default function CreateProject() {
   const {
     handleSubmit,
@@ -43,6 +47,20 @@ export default function CreateProject() {
     for (const key of keys) {
       const value = values[key]
 
+      if (!value.length) {
+        switch (key) {
+          case 'description':
+            projectData.append('description', projectDescription)
+            break
+          case 'repoLink':
+            projectData.append('repoLink', projectRepoLink)
+            break
+          case 'link':
+            projectData.append('link', projectRepoLink)
+            break
+        }
+      }
+
       if (typeof value === 'object') {
         projectData.append(key, value[0])
       } else {
@@ -51,8 +69,16 @@ export default function CreateProject() {
     }
 
     try {
-      await api.post('/projects', projectData)
-      navigation('/projects')
+      const response = await api.post<CreateProjectResponse>(
+        '/projects',
+        projectData
+      )
+
+      if (response.data.message) {
+        alert(response.data.message)
+      } else {
+        navigation('/projects')
+      }
     } catch (error) {
       alert(error)
     }
@@ -105,6 +131,11 @@ export default function CreateProject() {
             value={projectLink}
             onChange={(event) => setProjectLink(event.target.value)}
           />
+        </Flex>
+
+        <Flex flexDirection="column" mt="16px">
+          <Text mb="4px">Link do favicon</Text>
+          <Input type="url" {...register('faviconLink')} />
         </Flex>
 
         <Flex flexDirection="column" mt="16px">
