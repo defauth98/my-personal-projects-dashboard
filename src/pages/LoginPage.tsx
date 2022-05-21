@@ -1,4 +1,4 @@
-import { Button, Container, Input, Checkbox, Box } from '@chakra-ui/react'
+import { Button, Container, Input, Checkbox } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 
 import { useAuth } from '../contexts/authContext'
@@ -37,16 +37,14 @@ function LoginPage() {
         type="password"
         onChange={(event) => setPassword(event.target.value)}
       />
-      <Box>
-        <Checkbox
-          marginBottom="0.6rem"
-          marginRight="0.6rem"
-          type="checkbox"
-          checked={keepSession}
-          onChange={() => setKeepSession(!keepSession)}
-        />
+      <Checkbox
+        checked={keepSession}
+        onChange={() => setKeepSession(!keepSession)}
+        margin="1rem 0"
+      >
         Continuar logado
-      </Box>
+      </Checkbox>
+
       <Button
         width="100%"
         colorScheme="cyan"
