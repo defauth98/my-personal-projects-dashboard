@@ -50,8 +50,6 @@ export default function CreateProject() {
       }
     }
 
-    api.defaults.headers.common.Authorization = import.meta.env.VITE_API_TOKEN
-
     try {
       await api.post('/projects', projectData)
       navigation('/projects')
@@ -109,7 +107,7 @@ export default function CreateProject() {
           />
         </Flex>
 
-        {/* <Flex flexDirection="column" mt="16px">
+        <Flex flexDirection="column" mt="16px">
           <Text mb="4px">Thumnail</Text>
           <Input type="file" {...register('thumbnail')} />
         </Flex>
@@ -117,7 +115,7 @@ export default function CreateProject() {
         <Flex flexDirection="column" mt="16px">
           <Text mb="4px">Gif</Text>
           <Input type="file" marginTop="4px" {...register('gif')} />
-        </Flex> */}
+        </Flex>
 
         <Flex flexDirection="column" mt="16px">
           <Button

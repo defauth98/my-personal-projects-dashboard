@@ -17,7 +17,7 @@ export default function ProjectList() {
     if (user === null) {
       retrieveDataFromLocalStorage()
     }
-  }, [user])
+  }, [])
 
   return (
     <Container maxW="container.xl">
@@ -30,7 +30,7 @@ export default function ProjectList() {
           Adicionar
         </Button>
       </Flex>
-      <ProjectsTable />
+      {user && <ProjectsTable />}
     </Container>
   )
 }
