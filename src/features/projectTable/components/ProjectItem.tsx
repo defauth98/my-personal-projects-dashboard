@@ -26,7 +26,12 @@ export default function ProjectItem({
   }
 
   async function handleHiddeProject() {
-    await api.put(`/projects/${project.id}`, { hidden: !isHidden })
+    const formData = new FormData()
+
+    formData.append('hidden', isHidden ? 'false' : 'true')
+
+    await api.put(`/projects/${project.id}`, formData)
+
     setIsHidden(!isHidden)
   }
 
