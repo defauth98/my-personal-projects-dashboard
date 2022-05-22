@@ -60,9 +60,7 @@ export default function CreateProject() {
             projectData.append('link', projectRepoLink)
             break
         }
-      }
-
-      if (typeof value === 'object') {
+      } else if (typeof value === 'object') {
         projectData.append(key, value[0])
       } else {
         projectData.append(key, value)
