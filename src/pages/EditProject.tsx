@@ -1,6 +1,6 @@
 import { Button, Container, Flex, Input, Text } from '@chakra-ui/react'
 import { ArrowLeft } from 'phosphor-react'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router'
 import { api } from '../api/api'
@@ -11,12 +11,11 @@ import { ProjectType } from '../features/projectTable/dto/Project.dto'
 import createFormData from '../utils/createFormData'
 
 export default function EditProject() {
-  const {
-    handleSubmit,
-    register,
-    formState: { isSubmitting },
-    setValue,
-  } = useForm()
+  const { handleSubmit, register, setValue } = useForm()
+
+  const [submitingThumb, setsubmitingThumb] = useState(false)
+  const [submitingGif, setsubmitingGif] = useState(false)
+  const [submiting, setsubmiting] = useState(false)
 
   const { projectId } = useParams()
 
@@ -25,21 +24,34 @@ export default function EditProject() {
   const { user, retrieveDataFromLocalStorage } = useAuth()
 
   async function onSubmitProjectFields(values: any) {
+    setsubmiting(true)
+
     const projectData = createFormData(values)
 
     await api.put(`/projects/${projectId}`, projectData)
+    setsubmiting(false)
   }
 
   async function onSubmitThumbnail(values: any) {
-    const projectData = createFormData(values)
+    setsubmitingThumb(true)
+
+    const projectData = new FormData()
+
+    projectData.append('thumbnail', values.thumbnail[0])
 
     await api.put(`/projects/${projectId}`, projectData)
+    setsubmitingThumb(false)
   }
 
   async function onSubmitGif(values: any) {
-    const projectData = createFormData(values)
+    setsubmitingGif(true)
+
+    const projectData = new FormData()
+
+    projectData.append('gif', values.gif[0])
 
     await api.put(`/projects/${projectId}`, projectData)
+    setsubmitingGif(false)
   }
 
   function handleGoBack() {
@@ -106,7 +118,7 @@ export default function EditProject() {
             <Button
               mt={4}
               colorScheme="teal"
-              isLoading={isSubmitting}
+              isLoading={submiting}
               type="submit"
             >
               Salvar projeto
@@ -124,7 +136,7 @@ export default function EditProject() {
             <Button
               mt={4}
               colorScheme="teal"
-              isLoading={isSubmitting}
+              isLoading={submitingThumb}
               type="submit"
             >
               Salvar thumbnail
@@ -142,7 +154,7 @@ export default function EditProject() {
             <Button
               mt={4}
               colorScheme="teal"
-              isLoading={isSubmitting}
+              isLoading={submitingGif}
               type="submit"
             >
               Salvar gif
