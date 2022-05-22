@@ -24,6 +24,7 @@ type AuthContextData = {
   loading: boolean
   handleLogin(email: string, password: string, save: boolean): Promise<void>
   retrieveDataFromLocalStorage: () => void
+  logout: () => void
 }
 
 const AuthContext = createContext<AuthContextData>({} as AuthContextData)
@@ -34,7 +35,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const navigation = useNavigate()
 
-  const retrieveDataFromLocalStorage = () => {
+  useEffect(() => {
+    if (user) {
+      moveToProjectPage()
+    } else {
+      retrieveDataFromLocalStorage()
+    }
+  }, [user])
+
+  function retrieveDataFromLocalStorage() {
     const token = localStorage.getItem('@mppd_token')
     const user = localStorage.getItem('@mppd_user')
 
@@ -47,23 +56,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }
 
-  const moveToProjectPage = () => {
+  function moveToProjectPage() {
     navigation('/projects')
   }
 
-  useEffect(() => {
-    if (user) {
-      moveToProjectPage()
-    } else {
-      retrieveDataFromLocalStorage()
-    }
-  }, [user])
-
-  const handleLogin = async (
-    email: string,
-    password: string,
-    save: boolean
-  ) => {
+  async function handleLogin(email: string, password: string, save: boolean) {
     setLoading(true)
 
     const { status, data } = await api.post<LoginResponse>('/auth', {
@@ -85,6 +82,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLoading(false)
   }
 
+  function logout() {
+    setUser(null)
+
+    localStorage.removeItem('@mppd_token')
+    localStorage.removeItem('@mppd_user')
+  }
+
   return (
     <AuthContext.Provider
       value={{
@@ -93,6 +97,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         loading,
         handleLogin,
         retrieveDataFromLocalStorage,
+        logout,
       }}
     >
       {children}

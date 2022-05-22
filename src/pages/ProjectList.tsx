@@ -3,6 +3,7 @@ import ProjectsTable from '../features/projectTable/ProjectTable'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/authContext'
 import { useEffect } from 'react'
+import Header from '../features/Header/Header'
 
 export default function ProjectList() {
   const navigation = useNavigate()
@@ -20,17 +21,20 @@ export default function ProjectList() {
   }, [])
 
   return (
-    <Container maxW="container.xl">
-      <Flex justifyContent="space-between">
-        <Heading as="h1" size="md" margin="1rem 1.5rem">
-          Projetos no portfólio
-        </Heading>
+    <>
+      <Header />
+      <Container maxW="container.xl">
+        <Flex justifyContent="space-between">
+          <Heading as="h1" size="md" margin="1rem 1.5rem">
+            Projetos no portfólio
+          </Heading>
 
-        <Button margin="0.5rem 1.5rem" onClick={handleGoToCreateProjectPage}>
-          Adicionar
-        </Button>
-      </Flex>
-      {user && <ProjectsTable />}
-    </Container>
+          <Button margin="0.5rem 1.5rem" onClick={handleGoToCreateProjectPage}>
+            Adicionar
+          </Button>
+        </Flex>
+        {user && <ProjectsTable />}
+      </Container>
+    </>
   )
 }

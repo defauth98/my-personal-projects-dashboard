@@ -5,6 +5,7 @@ import { api } from '../api/api'
 import { useNavigate } from 'react-router'
 import { useEffect, useState } from 'react'
 import { githubAPI } from '../api/githubApi'
+import Header from '../features/Header/Header'
 
 type CreateProjectResponse = {
   message: string
@@ -89,76 +90,79 @@ export default function CreateProject() {
   }
 
   return (
-    <Container maxW="container.xl">
-      <Button margin="2rem 0" onClick={handleGoBack}>
-        <ArrowLeft size={32} />
-      </Button>
+    <>
+      <Header />
+      <Container maxW="container.xl">
+        <Button margin="2rem 0" onClick={handleGoBack}>
+          <ArrowLeft size={32} />
+        </Button>
 
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Flex flexDirection="column">
-          <Text mb="4px">Nome do projeto</Text>
-          <Input
-            {...register('name')}
-            value={projectName}
-            onChange={(event) => setProjectName(event.target.value)}
-          />
-        </Flex>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Flex flexDirection="column">
+            <Text mb="4px">Nome do projeto</Text>
+            <Input
+              {...register('name')}
+              value={projectName}
+              onChange={(event) => setProjectName(event.target.value)}
+            />
+          </Flex>
 
-        <Flex flexDirection="column" mt="16px">
-          <Text mb="4px">Descrição</Text>
-          <Input
-            {...register('description')}
-            value={projectDescription}
-            onChange={(event) => setProjectDescription(event.target.value)}
-          />
-        </Flex>
+          <Flex flexDirection="column" mt="16px">
+            <Text mb="4px">Descrição</Text>
+            <Input
+              {...register('description')}
+              value={projectDescription}
+              onChange={(event) => setProjectDescription(event.target.value)}
+            />
+          </Flex>
 
-        <Flex flexDirection="column" mt="16px">
-          <Text mb="4px">Link do repositório</Text>
-          <Input
-            type="url"
-            {...register('repoLink')}
-            value={projectRepoLink}
-            onChange={(event) => setProjectRepoLink(event.target.value)}
-          />
-        </Flex>
+          <Flex flexDirection="column" mt="16px">
+            <Text mb="4px">Link do repositório</Text>
+            <Input
+              type="url"
+              {...register('repoLink')}
+              value={projectRepoLink}
+              onChange={(event) => setProjectRepoLink(event.target.value)}
+            />
+          </Flex>
 
-        <Flex flexDirection="column" mt="16px">
-          <Text mb="4px">Link do projeto</Text>
-          <Input
-            type="url"
-            {...register('link')}
-            value={projectLink}
-            onChange={(event) => setProjectLink(event.target.value)}
-          />
-        </Flex>
+          <Flex flexDirection="column" mt="16px">
+            <Text mb="4px">Link do projeto</Text>
+            <Input
+              type="url"
+              {...register('link')}
+              value={projectLink}
+              onChange={(event) => setProjectLink(event.target.value)}
+            />
+          </Flex>
 
-        <Flex flexDirection="column" mt="16px">
-          <Text mb="4px">Link do favicon</Text>
-          <Input type="url" {...register('faviconLink')} />
-        </Flex>
+          <Flex flexDirection="column" mt="16px">
+            <Text mb="4px">Link do favicon</Text>
+            <Input type="url" {...register('faviconLink')} />
+          </Flex>
 
-        <Flex flexDirection="column" mt="16px">
-          <Text mb="4px">Thumnail</Text>
-          <Input type="file" {...register('thumbnail')} />
-        </Flex>
+          <Flex flexDirection="column" mt="16px">
+            <Text mb="4px">Thumnail</Text>
+            <Input type="file" {...register('thumbnail')} />
+          </Flex>
 
-        <Flex flexDirection="column" mt="16px">
-          <Text mb="4px">Gif</Text>
-          <Input type="file" marginTop="4px" {...register('gif')} />
-        </Flex>
+          <Flex flexDirection="column" mt="16px">
+            <Text mb="4px">Gif</Text>
+            <Input type="file" marginTop="4px" {...register('gif')} />
+          </Flex>
 
-        <Flex flexDirection="column" mt="16px">
-          <Button
-            mt={4}
-            colorScheme="teal"
-            isLoading={isSubmitting}
-            type="submit"
-          >
-            Criar projeto
-          </Button>
-        </Flex>
-      </form>
-    </Container>
+          <Flex flexDirection="column" mt="16px">
+            <Button
+              mt={4}
+              colorScheme="teal"
+              isLoading={isSubmitting}
+              type="submit"
+            >
+              Criar projeto
+            </Button>
+          </Flex>
+        </form>
+      </Container>
+    </>
   )
 }
