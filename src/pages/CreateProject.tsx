@@ -1,4 +1,4 @@
-import { Button, Container, Flex, Input, Text } from '@chakra-ui/react'
+import { Button, Checkbox, Container, Flex, Input, Text } from '@chakra-ui/react'
 import { useForm } from 'react-hook-form'
 import { ArrowLeft } from 'phosphor-react'
 import { api } from '../api/api'
@@ -6,9 +6,16 @@ import { useNavigate } from 'react-router'
 import { useEffect, useState } from 'react'
 import { githubAPI } from '../api/githubApi'
 import Header from '../features/Header/Header'
+import { AxiosResponse } from 'axios'
 
-type CreateProjectResponse = {
-  message: string
+type tag = {
+  id: number
+  name: string
+}
+
+interface projectCreateResponse {
+  id?: string
+  message?: string
 }
 
 export default function CreateProject() {
@@ -23,6 +30,7 @@ export default function CreateProject() {
   const [projectDescription, setProjectDescription] = useState('')
   const [projectRepoLink, setProjectRepoLink] = useState('')
   const [projectLink, setProjectLink] = useState('')
+  const [tags, setTags] = useState<tag[]>([])
 
   async function getProjectFromGithub() {
     const githubResponse = await githubAPI.get(
@@ -34,11 +42,21 @@ export default function CreateProject() {
     setProjectLink(githubResponse.data.homepage)
   }
 
+  async function getAvailableTags() {
+    const tagResponse = await api.get<tag[]>('tag')
+
+    setTags(tagResponse.data)
+  }
+
   useEffect(() => {
     if (projectName.length >= 5) {
       getProjectFromGithub()
     }
   }, [projectName])
+
+  useEffect(() => {
+    getAvailableTags()
+  }, [])
 
   async function onSubmit(values: any) {
     const projectData = new FormData()
@@ -67,8 +85,16 @@ export default function CreateProject() {
       }
     }
 
+    let tags = keys.filter(key => {
+      if (values[key] === true) {
+        return true
+      }
+
+      return false
+    })
+
     try {
-      const response = await api.post<CreateProjectResponse>(
+      const response: AxiosResponse<projectCreateResponse> = await api.post(
         '/projects',
         projectData
       )
@@ -76,6 +102,16 @@ export default function CreateProject() {
       if (response.data.message) {
         alert(response.data.message)
       } else {
+        tags = tags.map(tag => tag.split('-')[1])
+
+        const promises = tags.map(async tag => {
+          await api.post(`/project/${response.data.id}/tag`, {
+            tag_id: Number(tag)
+          })
+        })
+
+        await Promise.all(promises)
+
         navigation('/projects')
       }
     } catch (error) {
@@ -140,13 +176,19 @@ export default function CreateProject() {
           </Flex>
 
           <Flex flexDirection="column" mt="16px">
-            <Text mb="4px">Thumnail</Text>
-            <Input type="file" {...register('thumbnail')} />
+            <Text mb="4px">Thumbnail</Text>
+            <Input padding="6px" type="file" {...register('thumbnail')} />
           </Flex>
 
           <Flex flexDirection="column" mt="16px">
             <Text mb="4px">Gif</Text>
-            <Input type="file" marginTop="4px" {...register('gif')} />
+            <Input padding="6px" type="file" marginTop="4px" {...register('gif')} />
+          </Flex>
+
+          <Flex flexDirection="column" mt="16px">
+            <Text mb="4px">Tags</Text>
+
+            {tags.map(tag => <Checkbox key={tag.id} {...register(`tag-${tag.id}`)}>{tag.name}</Checkbox>)}
           </Flex>
 
           <Flex flexDirection="column" mt="16px">
