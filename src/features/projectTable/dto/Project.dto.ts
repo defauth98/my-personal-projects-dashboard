@@ -1,3 +1,10 @@
+export type ProjectTag = {
+  tag: {
+    id: string;
+    name: string;
+  }
+}
+
 export type ProjectType = {
   id: number
   name: string
@@ -7,6 +14,7 @@ export type ProjectType = {
   hidden: boolean
   link: string
   repoLink: string
+  ProjectHasTags: ProjectTag[]
   faviconLink?: string
   createdAt?: string
   updatedAt?: string
