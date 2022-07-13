@@ -8,7 +8,8 @@ export default function createFormData(values: any) {
       key !== 'thumbnail' &&
       key !== 'thumbnailPath' &&
       key !== 'gif' &&
-      key !== 'gifPath'
+      key !== 'gifPath' &&
+      key !== 'ProjectHasTags'
     ) {
       const value = values[key]
       if (typeof value === 'object' && value[0] && value[0].length) {
