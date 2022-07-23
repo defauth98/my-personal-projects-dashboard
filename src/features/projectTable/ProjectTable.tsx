@@ -1,25 +1,19 @@
-import { Table, Thead, Tbody, Tr, Th, TableContainer } from '@chakra-ui/react'
-import { useEffect, useState } from 'react'
-import { api } from '../../api/api'
+import { Table, TableContainer, Tbody, Th, Thead, Tr } from '@chakra-ui/react'
+import { ProjectType } from '../../types/Project.dto'
 import ProjectItem from './components/ProjectItem'
-import { ProjectType } from './dto/Project.dto'
 
-export default function ProjectsTable() {
-  const [projects, setProjects] = useState<ProjectType[]>([])
+interface ProjectTableProps {
+  projects: ProjectType[]
+  getProjects: () => {}
+}
 
-  async function getProjects() {
-    const request = await api.get('/projects')
-
-    setProjects(request.data)
-  }
-
-  useEffect(() => {
-    getProjects()
-  }, [])
-
+export default function ProjectsTable({
+  projects,
+  getProjects,
+}: ProjectTableProps) {
   return (
     <TableContainer>
-      <Table variant="simple">
+      <Table variant="striped" colorScheme="blackAlpha">
         <Thead>
           <Tr>
             <Th>Título</Th>

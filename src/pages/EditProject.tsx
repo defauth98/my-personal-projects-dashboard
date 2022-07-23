@@ -7,7 +7,7 @@ import { api } from '../api/api'
 import { useAuth } from '../contexts/authContext'
 import Header from '../features/Header/Header'
 
-import { ProjectType } from '../features/projectTable/dto/Project.dto'
+import { ProjectType } from '../types/Project.dto'
 import createFormData from '../utils/createFormData'
 
 type Tag = {

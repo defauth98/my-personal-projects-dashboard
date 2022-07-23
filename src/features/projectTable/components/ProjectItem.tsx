@@ -1,9 +1,9 @@
-import { Center, Flex, Td, Tr, Text } from '@chakra-ui/react'
-import { Eye, EyeClosed, Trash, Pencil } from 'phosphor-react'
+import { Center, Flex, Td, Text, Tr } from '@chakra-ui/react'
+import { Eye, EyeClosed, Pencil, Trash } from 'phosphor-react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { api } from '../../../api/api'
-import { ProjectType } from '../dto/Project.dto'
+import { ProjectType } from '../../../types/Project.dto'
 import ProjectLink from './ProjectLink'
 import ProjectRepositoryLink from './ProjectReposityLink'
 
