@@ -1,4 +1,4 @@
-import { Button, Container, Input, Checkbox } from '@chakra-ui/react'
+import { Button, Checkbox, Container, Input } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 
 import { useAuth } from '../contexts/authContext'
@@ -27,7 +27,7 @@ function LoginPage() {
       <Input
         marginBottom="0.6rem"
         placeholder="email@mail.com"
-        onChange={(event) => setEmail(event.target.value)}
+        onChange={(event: any) => setEmail(event.target.value)}
         type="email"
         autoComplete="on"
       />
@@ -35,7 +35,7 @@ function LoginPage() {
         marginBottom="0.6rem"
         placeholder="*********"
         type="password"
-        onChange={(event) => setPassword(event.target.value)}
+        onChange={(event: any) => setPassword(event.target.value)}
       />
       <Checkbox
         checked={keepSession}

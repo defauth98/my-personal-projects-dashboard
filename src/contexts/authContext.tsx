@@ -1,9 +1,10 @@
+import { useToast } from '@chakra-ui/react'
 import {
   createContext,
-  useState,
-  useContext,
   ReactNode,
+  useContext,
   useEffect,
+  useState,
 } from 'react'
 import { useNavigate } from 'react-router'
 import { api } from '../api/api'
@@ -16,6 +17,7 @@ type User = {
 type LoginResponse = {
   token: string
   user: User
+  message?: string
 }
 
 type AuthContextData = {
@@ -32,6 +34,7 @@ const AuthContext = createContext<AuthContextData>({} as AuthContextData)
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
+  const toast = useToast()
 
   const navigation = useNavigate()
 
@@ -67,6 +70,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       email,
       password,
     })
+
+    if (data?.message) {
+      toast({
+        title: 'Não foi possível realizar o login',
+        description: data?.message,
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+        position: 'top-right',
+      })
+    }
 
     if (String(status) === '200') {
       save && localStorage.setItem('@mppd_token', data.token)
