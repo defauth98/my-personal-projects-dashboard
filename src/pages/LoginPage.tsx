@@ -8,7 +8,7 @@ function LoginPage() {
   const [password, setPassword] = useState('')
   const [keepSession, setKeepSession] = useState(false)
 
-  const { user, handleLogin, retrieveDataFromLocalStorage } = useAuth()
+  const { user, handleLogin, retrieveDataFromLocalStorage, loading } = useAuth()
 
   useEffect(() => {
     if (user === null) {
@@ -49,6 +49,7 @@ function LoginPage() {
         width="100%"
         colorScheme="cyan"
         onClick={() => handleLogin(email, password, keepSession)}
+        isLoading={loading}
       >
         Login
       </Button>
