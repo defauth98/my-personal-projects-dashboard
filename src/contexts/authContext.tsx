@@ -33,7 +33,7 @@ const AuthContext = createContext<AuthContextData>({} as AuthContextData)
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const toast = useToast()
 
   const navigation = useNavigate()
