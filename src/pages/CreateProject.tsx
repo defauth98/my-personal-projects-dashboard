@@ -1,13 +1,19 @@
-import { Button, Checkbox, Container, Flex, Input, Text } from '@chakra-ui/react'
-import { useForm } from 'react-hook-form'
+import {
+  Button,
+  Checkbox,
+  Container,
+  Flex,
+  Input,
+  Text,
+} from '@chakra-ui/react'
+import axios, { AxiosResponse } from 'axios'
 import { ArrowLeft } from 'phosphor-react'
-import { api } from '../api/api'
-import { useNavigate } from 'react-router'
 import { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { useNavigate } from 'react-router'
+import { api } from '../api/api'
 import { githubAPI } from '../api/githubApi'
 import Header from '../features/Header/Header'
-import { AxiosResponse } from 'axios'
-
 type tag = {
   id: number
   name: string
@@ -59,33 +65,38 @@ export default function CreateProject() {
   }, [])
 
   async function onSubmit(values: any) {
-    const projectData = new FormData()
+    const cdnLink = 'https://personal-projects.defauth98.com/'
+
+    let thumbnailFileName = cdnLink
+    let gifFileName = cdnLink
+
+    if (values.thumbnail.length >= 1) {
+      const {
+        data: { url, fileName },
+      } = await api.post('uploadFile')
+
+      await axios.put(url, values.thumbnail[0], {
+        headers: { Accept: 'application/json', 'Content-Type': 'image/jpeg' },
+      })
+
+      thumbnailFileName += fileName
+    }
+
+    if (values.gif.length >= 1) {
+      const {
+        data: { url, fileName },
+      } = await api.post('uploadFile')
+
+      await axios.put(url, values.thumbnail[0], {
+        headers: { Accept: 'application/json', 'Content-Type': 'image/jpeg' },
+      })
+
+      gifFileName += fileName
+    }
 
     const keys = Object.keys(values)
 
-    for (const key of keys) {
-      const value = values[key]
-
-      if (!value.length) {
-        switch (key) {
-          case 'description':
-            projectData.append('description', projectDescription)
-            break
-          case 'repoLink':
-            projectData.append('repoLink', projectRepoLink)
-            break
-          case 'link':
-            projectData.append('link', projectRepoLink)
-            break
-        }
-      } else if (typeof value === 'object') {
-        projectData.append(key, value[0])
-      } else {
-        projectData.append(key, value)
-      }
-    }
-
-    let tags = keys.filter(key => {
+    let tags = keys.filter((key) => {
       if (values[key] === true) {
         return true
       }
@@ -94,19 +105,29 @@ export default function CreateProject() {
     })
 
     try {
+      const project = {
+        thumbnailPath: thumbnailFileName,
+        gifPath: gifFileName,
+        description: values.description,
+        faviconLink: values.faviconLink,
+        link: values.link,
+        name: values.name,
+        repoLink: values.repoLink,
+      }
+
       const response: AxiosResponse<projectCreateResponse> = await api.post(
         '/projects',
-        projectData
+        project
       )
 
       if (response.data.message) {
         alert(response.data.message)
       } else {
-        tags = tags.map(tag => tag.split('-')[1])
+        tags = tags.map((tag) => tag.split('-')[1])
 
-        const promises = tags.map(async tag => {
+        const promises = tags.map(async (tag) => {
           await api.post(`/project/${response.data.id}/tag`, {
-            tag_id: Number(tag)
+            tag_id: Number(tag),
           })
         })
 
@@ -177,18 +198,32 @@ export default function CreateProject() {
 
           <Flex flexDirection="column" mt="16px">
             <Text mb="4px">Thumbnail</Text>
-            <Input padding="6px" type="file" {...register('thumbnail')} />
+            <Input
+              padding="6px"
+              type="file"
+              {...register('thumbnail')}
+              name="thumbnail"
+            />
           </Flex>
 
           <Flex flexDirection="column" mt="16px">
             <Text mb="4px">Gif</Text>
-            <Input padding="6px" type="file" marginTop="4px" {...register('gif')} />
+            <Input
+              padding="6px"
+              type="file"
+              marginTop="4px"
+              {...register('gif')}
+            />
           </Flex>
 
           <Flex flexDirection="column" mt="16px">
             <Text mb="4px">Tags</Text>
 
-            {tags.map(tag => <Checkbox key={tag.id} {...register(`tag-${tag.id}`)}>{tag.name}</Checkbox>)}
+            {tags.map((tag) => (
+              <Checkbox key={tag.id} {...register(`tag-${tag.id}`)}>
+                {tag.name}
+              </Checkbox>
+            ))}
           </Flex>
 
           <Flex flexDirection="column" mt="16px">

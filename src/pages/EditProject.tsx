@@ -1,4 +1,12 @@
-import { Button, Checkbox, Container, Flex, Input, Text } from '@chakra-ui/react'
+import {
+  Button,
+  Checkbox,
+  Container,
+  Flex,
+  Input,
+  Text,
+} from '@chakra-ui/react'
+import axios from 'axios'
 import { ArrowLeft } from 'phosphor-react'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -8,12 +16,13 @@ import { useAuth } from '../contexts/authContext'
 import Header from '../features/Header/Header'
 
 import { ProjectType } from '../types/Project.dto'
-import createFormData from '../utils/createFormData'
 
 type Tag = {
   id: number
   name: string
 }
+
+const CDN_LINK = 'https://personal-projects.defauth98.com/'
 
 export default function EditProject() {
   const { handleSubmit, register, setValue } = useForm()
@@ -21,7 +30,7 @@ export default function EditProject() {
   const [submitingThumb, setsubmitingThumb] = useState(false)
   const [submitingGif, setsubmitingGif] = useState(false)
   const [submiting, setsubmiting] = useState(false)
-  const [avaliableTags, setAvaliableTags] = useState<Tag[]>([])
+  const [avaliableTags, setAvailableTags] = useState<Tag[]>([])
   const [projectTags, setProjectTags] = useState<string[]>([])
 
   const { projectId } = useParams()
@@ -33,37 +42,66 @@ export default function EditProject() {
   async function getAvailableTags() {
     const tagResponse = await api.get<Tag[]>('tag')
 
-    setAvaliableTags(tagResponse.data)
+    setAvailableTags(tagResponse.data)
   }
 
-  async function onSubmitProjectFields(values: any) {
+  async function submitProject(values: any) {
     setsubmiting(true)
 
-    const projectData = createFormData(values)
+    const { name, description, link, repoLink, faviconLink } = values
 
-    await api.put(`/projects/${projectId}`, projectData)
+    await api.put(`/projects/${projectId}`, {
+      name,
+      description,
+      link,
+      repoLink,
+      faviconLink,
+    })
+
     setsubmiting(false)
   }
 
   async function onSubmitThumbnail(values: any) {
     setsubmitingThumb(true)
 
-    const projectData = new FormData()
+    const thumbnail = values.thumbnail[0]
 
-    projectData.append('thumbnail', values.thumbnail[0])
+    const file = thumbnail.name.split('.')
 
-    await api.put(`/projects/${projectId}`, projectData)
+    const {
+      data: { url, fileName },
+    } = await api.post(`uploadFile?filetype=${file[1]}&filePrefix=${file[0]}`)
+
+    await axios.put(url, thumbnail, {
+      headers: { Accept: 'application/json', 'Content-Type': thumbnail.type },
+    })
+
+    await api.put(`/projects/${projectId}`, {
+      thumbnailPath: CDN_LINK + fileName,
+    })
+
     setsubmitingThumb(false)
   }
 
   async function onSubmitGif(values: any) {
     setsubmitingGif(true)
 
-    const projectData = new FormData()
+    const thumbnail = values.thumbnail[0]
 
-    projectData.append('gif', values.gif[0])
+    const file = thumbnail.name.split('.')
 
-    await api.put(`/projects/${projectId}`, projectData)
+    const {
+      data: { url, fileName },
+    } = await api.post(`uploadFile?filetype=${file[1]}&filePrefix=${file[0]}`)
+
+    await axios.put(url, thumbnail, {
+      headers: { Accept: 'application/json', 'Content-Type': thumbnail.type },
+    })
+
+    await api.put(`/projects/${projectId}`, {
+      gifPath: CDN_LINK + fileName,
+    })
+
     setsubmitingGif(false)
   }
 
@@ -78,7 +116,7 @@ export default function EditProject() {
 
     for (const key of keys) {
       if (key === 'ProjectHasTags') {
-        const projectTags = response.data.ProjectHasTags.map(projectTag => {
+        const projectTags = response.data.ProjectHasTags.map((projectTag) => {
           return projectTag.tag.name
         })
 
@@ -95,7 +133,7 @@ export default function EditProject() {
     if (projectAlreadyHas) {
       await api.delete(`/project/${projectId}/tag/${tag.id}`)
 
-      setProjectTags(projectTags.filter(item => item !== tag.name))
+      setProjectTags(projectTags.filter((item) => item !== tag.name))
     } else {
       await api.post(`/project/${projectId}/tag`, { tag_id: tag.id })
       setProjectTags([...projectTags, tag.name])
@@ -124,7 +162,7 @@ export default function EditProject() {
           <ArrowLeft size={32} />
         </Button>
 
-        <form onSubmit={handleSubmit(onSubmitProjectFields)}>
+        <form onSubmit={handleSubmit(submitProject)}>
           <Flex flexDirection="column">
             <Text mb="4px">Nome do projeto</Text>
             <Input {...register('name')} />
@@ -153,10 +191,19 @@ export default function EditProject() {
           <Flex flexDirection="column" mt="16px">
             <Text mb="4px">Tags</Text>
 
-            {avaliableTags.map(tag => {
+            {avaliableTags.map((tag) => {
               const checked = projectTags.includes(tag.name)
 
-              return (<Checkbox key={tag.id}{...register(`tag-${tag.id}`)} isChecked={checked} onChange={() => toggleProjectTag(tag, checked)}>{tag.name}</Checkbox>)
+              return (
+                <Checkbox
+                  key={tag.id}
+                  {...register(`tag-${tag.id}`)}
+                  isChecked={checked}
+                  onChange={() => toggleProjectTag(tag, checked)}
+                >
+                  {tag.name}
+                </Checkbox>
+              )
             })}
           </Flex>
 
@@ -193,7 +240,12 @@ export default function EditProject() {
         <form onSubmit={handleSubmit(onSubmitGif)}>
           <Flex flexDirection="column" mt="16px">
             <Text mb="4px">Gif</Text>
-            <Input padding="6px" type="file" marginTop="4px" {...register('gif')} />
+            <Input
+              padding="6px"
+              type="file"
+              marginTop="4px"
+              {...register('gif')}
+            />
           </Flex>
 
           <Flex flexDirection="column" mt="16px">
