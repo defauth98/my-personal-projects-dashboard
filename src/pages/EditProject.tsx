@@ -86,16 +86,16 @@ export default function EditProject() {
   async function onSubmitGif(values: any) {
     setsubmitingGif(true)
 
-    const thumbnail = values.thumbnail[0]
+    const gif = values.gif[0]
 
-    const file = thumbnail.name.split('.')
+    const file = gif.name.split('.')
 
     const {
       data: { url, fileName },
     } = await api.post(`uploadFile?filetype=${file[1]}&filePrefix=${file[0]}`)
 
-    await axios.put(url, thumbnail, {
-      headers: { Accept: 'application/json', 'Content-Type': thumbnail.type },
+    await axios.put(url, gif, {
+      headers: { Accept: 'application/json', 'Content-Type': gif.type },
     })
 
     await api.put(`/projects/${projectId}`, {
