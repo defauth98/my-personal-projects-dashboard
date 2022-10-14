@@ -1,5 +1,6 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { AuthProvider } from './contexts/authContext'
+import ApiStatus from './pages/ApiStatus'
 import CreateProject from './pages/CreateProject'
 import EditProject from './pages/EditProject'
 import LoginPage from './pages/LoginPage'
@@ -14,6 +15,7 @@ export default function App() {
           <Route path="/projects" element={<ProjectList />} />
           <Route path="/createProject" element={<CreateProject />} />
           <Route path="/editProject/:projectId" element={<EditProject />} />
+          <Route path="/apisStatus" element={<ApiStatus />} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>

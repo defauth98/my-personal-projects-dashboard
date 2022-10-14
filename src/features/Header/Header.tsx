@@ -22,6 +22,10 @@ export default function Header() {
     navigator('/projects')
   }
 
+  function handleNavigeteToApisStatus() {
+    navigator('/apisStatus')
+  }
+
   return (
     <Box background="gray.800">
       <Container
@@ -32,15 +36,30 @@ export default function Header() {
         justifyContent="space-between"
         padding="0 40px"
       >
+        <Flex>
         <Heading
           as="h5"
           size="sm"
           color="white"
           onClick={handleNavigateToProjectList}
           cursor="pointer"
+          marginRight="15px"
         >
-          My personal projects
+          Home
         </Heading>
+
+        <Heading
+          as="h5"
+          size="sm"
+          color="white"
+          onClick={handleNavigeteToApisStatus}
+          cursor="pointer"
+        >
+         APIs
+        </Heading>
+
+        </Flex>
+
         <Flex width="15%" justifyContent="space-between">
           <Box>
             <Image
