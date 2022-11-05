@@ -79,7 +79,7 @@ export default function CreateProject() {
       })
 
       const {
-        data: { url, fileName },
+        data: { url, filePath },
       } = await api.post(`uploadFile?filetype=png&projectName=${values.name}`)
 
       await axios.put(url, values.thumbnail[0])
@@ -91,7 +91,7 @@ export default function CreateProject() {
         position: 'top-right',
       })
 
-      return CDN_LINK + fileName
+      return CDN_LINK + filePath
     }
   }
 
@@ -105,7 +105,7 @@ export default function CreateProject() {
       })
 
       const {
-        data: { url, fileName },
+        data: { url, filePath },
       } = await api.post(`uploadFile?filetype=png&projectName=${values.name}`)
 
       await axios.put(url, values.thumbnail[0])
@@ -117,7 +117,7 @@ export default function CreateProject() {
         position: 'top-right',
       })
 
-      return CDN_LINK + fileName
+      return CDN_LINK + filePath
     }
   }
 
