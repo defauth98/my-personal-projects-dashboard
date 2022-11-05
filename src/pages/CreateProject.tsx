@@ -5,6 +5,7 @@ import {
   Flex,
   Input,
   Text,
+  useToast
 } from '@chakra-ui/react'
 import axios, { AxiosResponse } from 'axios'
 import { ArrowLeft } from 'phosphor-react'
@@ -24,12 +25,16 @@ interface projectCreateResponse {
   message?: string
 }
 
+const CDN_LINK = 'https://personal-projects.defauth98.com/'
+
 export default function CreateProject() {
   const {
     handleSubmit,
     register,
     formState: { isSubmitting },
   } = useForm()
+
+  const toast = useToast()
 
   const navigation = useNavigate()
   const [projectName, setProjectName] = useState('')
@@ -64,35 +69,61 @@ export default function CreateProject() {
     getAvailableTags()
   }, [])
 
-  async function onSubmit(values: any) {
-    const cdnLink = 'https://personal-projects.defauth98.com/'
-
-    let thumbnailFileName = cdnLink
-    let gifFileName = cdnLink
-
+  async function uploadThumbnail(values: any) {
     if (values.thumbnail.length >= 1) {
-      const {
-        data: { url, fileName },
-      } = await api.post('uploadFile')
-
-      await axios.put(url, values.thumbnail[0], {
-        headers: { Accept: 'application/json', 'Content-Type': 'image/jpeg' },
+      toast({
+        title: 'Fazendo upload da thumbnail',
+        duration: 1500,
+        status: 'info',
+        position: 'top-right',
       })
 
-      thumbnailFileName += fileName
-    }
+      const {
+        data: { url, fileName },
+      } = await api.post(`uploadFile?filetype=png&projectName=${values.name}`)
 
+      await axios.put(url, values.thumbnail[0])
+
+      toast({
+        title: 'Upload da thumbnail realizado com sucesso',
+        duration: 1500,
+        status: 'success',
+        position: 'top-right',
+      })
+
+      return CDN_LINK + fileName
+    }
+  }
+
+  async function uploadGif(values: any) {
     if (values.gif.length >= 1) {
-      const {
-        data: { url, fileName },
-      } = await api.post('uploadFile')
-
-      await axios.put(url, values.thumbnail[0], {
-        headers: { Accept: 'application/json', 'Content-Type': 'image/jpeg' },
+      toast({
+        title: 'Fazendo upload do gif',
+        duration: 1500,
+        status: 'info',
+        position: 'top-right',
       })
 
-      gifFileName += fileName
+      const {
+        data: { url, fileName },
+      } = await api.post(`uploadFile?filetype=png&projectName=${values.name}`)
+
+      await axios.put(url, values.thumbnail[0])
+
+      toast({
+        title: 'Upload do gif realizado com sucesso',
+        duration: 1500,
+        status: 'success',
+        position: 'top-right',
+      })
+
+      return CDN_LINK + fileName
     }
+  }
+
+  async function onSubmit(values: any) {
+    const thumbnailFileName = await uploadThumbnail(values)
+    const gifFileName = await uploadGif(values)
 
     const keys = Object.keys(values)
 
@@ -105,6 +136,13 @@ export default function CreateProject() {
     })
 
     try {
+      toast({
+        title: 'Criando o projeto',
+        duration: 1500,
+        status: 'info',
+        position: 'top-right',
+      })
+
       const project = {
         thumbnailPath: thumbnailFileName,
         gifPath: gifFileName,
@@ -135,8 +173,21 @@ export default function CreateProject() {
 
         navigation('/projects')
       }
-    } catch (error) {
-      alert(error)
+
+      toast({
+        title: 'Projeto criado com sucesso',
+        duration: 1500,
+        status: 'success',
+        position: 'top-right',
+      })
+    } catch (error: any) {
+      toast({
+        title: 'Erro ao criar o projeto',
+        description: error.message,
+        duration: 500,
+        status: 'error',
+        position: 'top-right',
+      })
     }
   }
 
